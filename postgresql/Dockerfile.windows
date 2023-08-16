@@ -44,6 +44,6 @@ RUN pg_ctl -D "C:/pgsql/data" start && \
     # dropdb ContainerUser && \
     pg_ctl -D "C:/pgsql/data" stop
 
-HEALTHCHECK --interval=5s --timeout=60s CMD pg_isready --host=localhost --dbname=postgres --user=postgres --port=5432
+HEALTHCHECK --interval=5s --timeout=60s CMD pg_isready --host=localhost --port=5432 --dbname=postgres --username=postgres
 
 CMD ["C:/pgsql/bin/postgres.exe", "-D", "C:/pgsql/data"]

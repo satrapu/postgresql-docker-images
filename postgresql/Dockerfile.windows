@@ -35,14 +35,15 @@ COPY postgresql.conf /pgsql/data/
 COPY pg_hba.conf /pgsql/data/
 
 RUN pg_ctl -D "C:/pgsql/data" start && \
+    # satrapu 2023-08-16: See more about the 'createdb' command here: https://www.postgresql.org/docs/current/app-createdb.html
     createdb && \
+    # satrapu 2023-08-16: See more about the 'createuser' command here: https://www.postgresql.org/docs/current/app-createuser.html
     createuser --createdb --superuser --createrole --inherit --login postgres && \
     psql -c "ALTER USER postgres WITH PASSWORD 'postgres'; " && \
-    dropdb ContainerUser && \
+    # satrapu 2023-08-16: Avoid removing 'ContainerUser' database to avoid error: 'FATAL:  database "ContainerUser" does not exist'
+    # dropdb ContainerUser && \
     pg_ctl -D "C:/pgsql/data" stop
 
-USER postgres
-
-HEALTHCHECK --interval=5s --timeout=60s CMD pg_isready
+HEALTHCHECK --interval=5s --timeout=60s CMD pg_isready --dbname=postgres --user=postgres --port=5432
 
 CMD ["C:/pgsql/bin/postgres.exe", "-D", "C:/pgsql/data"]
